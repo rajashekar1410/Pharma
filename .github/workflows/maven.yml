@@ -65,4 +65,20 @@ jobs:
         SSC_UPLOAD_TOKEN: ${{ secrets.SSC_UPLOAD_TOKEN }}
         APPLICATION: "Pharma"
         VERSION: "1.0"
-        BUILD_OPTS: "-bt mvn"      
+        BUILD_OPTS: "-bt mvn"     
+      
+      ## Fetching Results back to Github
+    - name: Generate Fortify Report
+      run: |
+        wget -nv https://github.com/fortify/FortifyVulnerabilityExporter/releases/download/v1.5.5/FortifyVulnerabilityExporter.zip
+        mkdir -p $HOME/Fortify
+        unzip FortifyVulnerabilityExporter.zip -d "$HOME/Fortify/"
+        echo $PATH
+        export PATH=$PATH:$HOME/Fortify/
+        echo $PATH
+        FORTIFY_BIN_JAR=$HOME/Fortify/FortifyVulnerabilityExporter.jar
+        java -jar $FORTIFY_BIN_JAR SSCToGitHub --ssc.baseUrl=https://fortify.cyberxdemo.com:8443/ssc --ssc.user=admin --ssc.password=sscadmin@123 --ssc.version.name=Pharma:1.0 
+# Uploaded the generated file containing Fortify vulnerabilities to GitHub.
+    - uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: ./gh-fortify-sast.sarif
