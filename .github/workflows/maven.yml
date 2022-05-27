@@ -63,8 +63,8 @@ jobs:
       env:                                            
         SC_CONTROLLER_URL: ${{ secrets.SC_CONTROLLER_URL }}
         SSC_UPLOAD_TOKEN: ${{ secrets.SSC_UPLOAD_TOKEN }}
-        APPLICATION: "Pharma"
-        VERSION: "1.0"
+        APPLICATION: "Pharma2"
+        VERSION: "2.0"
         BUILD_OPTS: "-bt mvn"     
       
       ## Fetching Results back to Github
