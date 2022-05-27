@@ -1,0 +1,100 @@
+
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id "org.springframework.boot" version "2.1.8.RELEASE"
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.1.8.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.1.8.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-security:2.1.8.RELEASE'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.1.8.RELEASE'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0'
+    implementation 'org.springframework.boot:spring-boot-starter-tomcat:2.1.8.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.1.8.RELEASE'
+    implementation 'com.h2database:h2:1.4.197'
+    implementation 'org.passay:passay:1.5.0'
+    implementation 'org.webjars:bootstrap:4.5.3'
+    implementation 'org.webjars:jquery:3.5.1'
+    implementation 'org.webjars:font-awesome:5.15.2'
+    implementation 'org.webjars:chartjs:2.9.4'
+    implementation 'org.webjars.npm:axios:0.21.1'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.4.3'
+    implementation 'org.springdoc:springdoc-openapi-security:1.4.3'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatypes-collections:2.13.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation 'org.apache.maven.wagon:wagon-http:3.4.1'
+    implementation 'com.github.cliftonlabs:json-simple:2.3.1'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.0.0-rc-2'
+    implementation 'org.springframework.boot:spring-boot-devtools:2.1.8.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    modules {
+        module("org.springframework.boot:spring-boot-starter-logging") {
+            replacedBy("org.springframework.boot:spring-boot-starter-log4j2", "Use Log4j2 instead of Logback")
+        }
+    }
+	testImplementation 'org.hibernate.validator:hibernate-validator:6.1.0.Final'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.1.8.RELEASE'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.microfocus.example'
+version = '1.0-SNAPSHOT'
+description = 'iwa'
+sourceCompatibility = '1.11'
+targetCompatibility = '1.11'
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources", "src/main/configs"
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
+    reports {
+        junitXml.enabled = true
+        html.enabled = false
+    }
+}
+
+bootRun {
+    systemProperty "spring.profiles.active", "dev"
+}
+
+task writeClasspath() {
+    doLast() {
+        buildDir.mkdirs()
+        def files = configurations.compileClasspath.getFiles().sort()
+        new File(buildDir, "classpath.txt").text = files.collect { it.path }.join(';')
+        //files.forEach{ f -> print("$f.path;")}
+    }
+}
